@@ -1,3 +1,4 @@
+# Golang
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -14,9 +15,36 @@
 # Dependency directories (if you use vendoring)
 vendor/
 
-# Go workspace file
-go.work
-go.work.sum
+
+# React
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# typescript
+*.tsbuildinfo
 
 # IDE/editor directories and files
 .vscode/
@@ -27,6 +55,10 @@ go.work.sum
 # Logs
 *.log
 
+# local env files
+.env*.local
+.env
+
 # Build directories
 bin/
 build/
@@ -34,3 +66,4 @@ build/
 # OS-specific files
 .DS_Store
 Thumbs.db
+*.pem
