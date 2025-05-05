@@ -10,21 +10,7 @@ import (
 )
 
 func SetupRoutes(r *http.ServeMux, db *gorm.DB) {
-	setupAuthRoutes(r)
 	setupProductRoutes(r, db)
-}
-
-func setupAuthRoutes(r *http.ServeMux) {
-	service := service.NewAuthService()
-	handler := handlers.NewAuthHandler(service)
-
-	r.Handle("/api/signup", withMiddleware(
-		http.HandlerFunc(handler.SingUp),
-	))
-
-	r.Handle("/api/signin", withMiddleware(
-		http.HandlerFunc(handler.SignIn),
-	))
 }
 
 func setupProductRoutes(r *http.ServeMux, db *gorm.DB) {
