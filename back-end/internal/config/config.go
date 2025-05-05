@@ -7,13 +7,15 @@ import (
 )
 
 type Env struct {
-	DBHost        string `mapstructure:"DB_HOST"`
-	DBPort        string `mapstructure:"DB_PORT"`
-	DBUser        string `mapstructure:"DB_USER"`
-	DBPass        string `mapstructure:"DB_PASS"`
-	DBName        string `mapstructure:"DB_NAME"`
-	Auth0Audience string `mapstructure:"AUTH0_AUDIENCE"`
-	Auth0Domain   string `mapstructure:"AUTH0_DOMAIN"`
+	DBHost       string `mapstructure:"DB_HOST"`
+	DBPort       string `mapstructure:"DB_PORT"`
+	DBUser       string `mapstructure:"DB_USER"`
+	DBPass       string `mapstructure:"DB_PASS"`
+	DBName       string `mapstructure:"DB_NAME"`
+	ClientId     string `mapstructure:"COGNITO_APP_CLIENT_ID"`
+	ClientSecret string `mapstructure:"COGNITO_APP_CLIENT_SECRET"`
+	UserPollId   string `mapstructure:"COGNITO_USER_POOL_ID"`
+	Region       string `mapstructuree:"AWS_REGION"`
 }
 
 func LoadEnv() Env {

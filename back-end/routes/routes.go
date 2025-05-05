@@ -4,17 +4,30 @@ import (
 	"net/http"
 
 	"github.com/esuEdu/casa-oliveira/internal/handlers"
-	"github.com/esuEdu/casa-oliveira/internal/middleware"
 	"github.com/esuEdu/casa-oliveira/internal/repositories"
 	"github.com/esuEdu/casa-oliveira/internal/service"
 	"gorm.io/gorm"
 )
 
 func SetupRoutes(r *http.ServeMux, db *gorm.DB) {
-	SetupProductRoutes(r, db)
+	setupAuthRoutes(r)
+	setupProductRoutes(r, db)
 }
 
-func SetupProductRoutes(r *http.ServeMux, db *gorm.DB) {
+func setupAuthRoutes(r *http.ServeMux) {
+	service := service.NewAuthService()
+	handler := handlers.NewAuthHandler(service)
+
+	r.Handle("/api/signup", withMiddleware(
+		http.HandlerFunc(handler.SingUp),
+	))
+
+	r.Handle("/api/signin", withMiddleware(
+		http.HandlerFunc(handler.SignIn),
+	))
+}
+
+func setupProductRoutes(r *http.ServeMux, db *gorm.DB) {
 
 	repo := repositories.NewProductRepo(db)
 	service := service.NewProductService(repo)
@@ -23,13 +36,11 @@ func SetupProductRoutes(r *http.ServeMux, db *gorm.DB) {
 	// /api/product/
 	r.Handle("/api/product", withMiddleware(
 		http.HandlerFunc(handler.HandleProduct),
-		middleware.EnsureValidToken(),
 	))
 
 	// /api/product/:id
 	r.Handle("/api/product/", withMiddleware(
 		http.HandlerFunc(handler.HandleProductByID),
-		middleware.EnsureValidToken(),
 	))
 }
 
