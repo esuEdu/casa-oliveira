@@ -8,6 +8,7 @@ import (
 type UserRepo interface {
 	Create(u *entity.User) error
 	FindByID(id uint) (*entity.User, error)
+	FindByEmail(email string) (*entity.User, error)
 	Update(u *entity.User) error
 }
 
@@ -27,6 +28,16 @@ func (r *userRepo) Create(u *entity.User) error {
 	}
 
 	return nil
+}
+
+func (r *userRepo) FindByEmail(email string) (*entity.User, error) {
+	var user entity.User
+
+	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
 
 func (r *userRepo) FindByID(id uint) (*entity.User, error) {
