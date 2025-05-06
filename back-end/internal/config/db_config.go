@@ -25,7 +25,7 @@ func InitDB() *gorm.DB {
 		panic(fmt.Sprintf("failed to connect database: %v", err))
 	}
 
-	db.AutoMigrate(&entity.Product{})
+	db.AutoMigrate(&entity.Product{}, &entity.User{})
 
 	return db
 }

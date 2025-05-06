@@ -11,10 +11,28 @@ import (
 )
 
 func SetupRoutes(r *http.ServeMux, db *gorm.DB) {
-	SetupProductRoutes(r, db)
+	setupProductRoutes(r, db)
+	setupUserRoutes(r, db)
 }
 
-func SetupProductRoutes(r *http.ServeMux, db *gorm.DB) {
+func setupUserRoutes(r *http.ServeMux, db *gorm.DB) {
+	repo := repositories.NewUserRepo(db)
+	service := service.NewUserService(repo)
+	handler := handlers.NewUserHandler(service)
+
+	// /api/signup
+	r.Handle("/api/signup", withMiddleware(
+		http.HandlerFunc(handler.SignUp),
+	))
+
+	// /api/signin
+	r.Handle("/api/signin", withMiddleware(
+		http.HandlerFunc(handler.SignIn),
+	))
+
+}
+
+func setupProductRoutes(r *http.ServeMux, db *gorm.DB) {
 
 	repo := repositories.NewProductRepo(db)
 	service := service.NewProductService(repo)
@@ -23,13 +41,13 @@ func SetupProductRoutes(r *http.ServeMux, db *gorm.DB) {
 	// /api/product/
 	r.Handle("/api/product", withMiddleware(
 		http.HandlerFunc(handler.HandleProduct),
-		middleware.EnsureValidToken(),
+		middleware.AuthMiddleware,
 	))
 
 	// /api/product/:id
 	r.Handle("/api/product/", withMiddleware(
 		http.HandlerFunc(handler.HandleProductByID),
-		middleware.EnsureValidToken(),
+		middleware.AuthMiddleware,
 	))
 }
 
