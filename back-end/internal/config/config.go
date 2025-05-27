@@ -2,35 +2,56 @@ package config
 
 import (
 	"log"
-
-	"github.com/spf13/viper"
+	"os"
+	"strconv"
 )
 
 type Env struct {
-	DBHost                 string `mapstructure:"DB_HOST"`
-	DBPort                 string `mapstructure:"DB_PORT"`
-	DBUser                 string `mapstructure:"DB_USER"`
-	DBPass                 string `mapstructure:"DB_PASS"`
-	DBName                 string `mapstructure:"DB_NAME"`
-	AccessTokenExpiryHour  int    `mapstructure:"ACCESS_TOKEN_EXPIRY_HOUR"`
-	RefreshTokenExpiryHour int    `mapstructure:"REFRESH_TOKEN_EXPIRY_HOUR"`
-	AccessTokenSecret      string `mapstructure:"ACCESS_TOKEN_SECRET"`
-	RefreshTokenSecret     string `mapstructure:"REFRESH_TOKEN_SECRET"`
+	AppPort                string
+	DBHost                 string
+	DBPort                 string
+	DBUser                 string
+	DBPass                 string
+	DBName                 string
+	AccessTokenExpiryHour  int
+	RefreshTokenExpiryHour int
+	AccessTokenSecret      string
+	RefreshTokenSecret     string
 }
 
 func LoadEnv() Env {
-	env := Env{}
+	return Env{
+		AppPort:                getEnvString("APP_PORT", false),
+		DBHost:                 getEnvString("DB_HOST", true),
+		DBPort:                 getEnvString("DB_PORT", true),
+		DBUser:                 getEnvString("DB_USER", true),
+		DBPass:                 getEnvString("DB_PASSWORD", true),
+		DBName:                 getEnvString("DB_NAME", true),
+		AccessTokenExpiryHour:  getEnvInt("ACCESS_TOKEN_EXPIRY_HOUR", true),
+		RefreshTokenExpiryHour: getEnvInt("REFRESH_TOKEN_EXPIRY_HOUR", true),
+		AccessTokenSecret:      getEnvString("ACCESS_TOKEN_SECRET", true),
+		RefreshTokenSecret:     getEnvString("REFRESH_TOKEN_SECRET", true),
+	}
+}
 
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal("Can't find the file .env: ", err)
+// Helper functions
+func getEnvString(key string, required bool) string {
+	value := os.Getenv(key)
+	if required && value == "" {
+		log.Fatalf("Missing required environment variable: %s", key)
+	}
+	return value
+}
+
+func getEnvInt(key string, required bool) int {
+	strValue := getEnvString(key, required)
+	if strValue == "" && !required {
+		return 0
 	}
 
-	err = viper.Unmarshal(&env)
+	value, err := strconv.Atoi(strValue)
 	if err != nil {
-		log.Fatal("Environment can't be loaded: ", err)
+		log.Fatalf("Invalid integer value for %s: %v", key, err)
 	}
-
-	return env
+	return value
 }
